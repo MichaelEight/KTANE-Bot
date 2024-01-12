@@ -369,7 +369,17 @@ namespace KTANE_Bot
                             if (whoIsOnFirst.Display == string.Empty)
                             {
                                 whoIsOnFirst.Display = command;
-                                return whoIsOnFirst.Solve();
+                                var ans = whoIsOnFirst.Solve();
+
+                                if(ans.StartsWith("Error"))
+                                {
+                                    whoIsOnFirst.Display = string.Empty;
+                                    return ans;
+                                }
+                                else
+                                {
+                                    return whoIsOnFirst.Solve();
+                                }
                             }
 
                             whoIsOnFirst.Button = command;

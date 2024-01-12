@@ -20,3 +20,13 @@ D:\GitHub\KTANE-Bot\obj\Debug\KTANE-Bot.csproj.GenerateResource.cache
 D:\GitHub\KTANE-Bot\obj\Debug\KTANE-Bot.csproj.CoreCompileInputs.cache
 D:\GitHub\KTANE-Bot\obj\Debug\KTANE-Bot.exe
 D:\GitHub\KTANE-Bot\obj\Debug\KTANE-Bot.pdb
+D:\VSProjects\KTaNEbot\bin\Debug\KTANE-Bot.exe.config
+D:\VSProjects\KTaNEbot\bin\Debug\KTANE-Bot.exe
+D:\VSProjects\KTaNEbot\bin\Debug\KTANE-Bot.pdb
+D:\VSProjects\KTaNEbot\obj\Debug\KTANE-Bot.csproj.AssemblyReference.cache
+D:\VSProjects\KTaNEbot\obj\Debug\KTANE_Bot.Form1.resources
+D:\VSProjects\KTaNEbot\obj\Debug\KTANE_Bot.Properties.Resources.resources
+D:\VSProjects\KTaNEbot\obj\Debug\KTANE-Bot.csproj.GenerateResource.cache
+D:\VSProjects\KTaNEbot\obj\Debug\KTANE-Bot.csproj.CoreCompileInputs.cache
+D:\VSProjects\KTaNEbot\obj\Debug\KTANE-Bot.exe
+D:\VSProjects\KTaNEbot\obj\Debug\KTANE-Bot.pdb

@@ -101,7 +101,22 @@ namespace KTANE_Bot
 
         public override string Solve()
         {
-            return Button == string.Empty ? PositionsDict[Display] : WordsDict[Button].Replace(',', '.');
+            try
+            {
+                if (Button == string.Empty)
+                {
+                    return PositionsDict[Display];
+                }
+                else
+                {
+                    return WordsDict[Button].Replace(',', '.');
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                // Handle the exception (e.g., log the error, return a default message)
+                return "Error: Wrong word.";
+            }
         }
     }
 }
