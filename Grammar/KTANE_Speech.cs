@@ -114,13 +114,17 @@ namespace KTANE_Bot
                     {
                         if (i + 1 >= commands.Length)
                         {
-                            message.Append("Incomplete command. ");
-                            continue;
+                            if(commands[i] != "done" && commands[i] != "escape"){
+                                message.Append("Incomplete command. ");
+                                continue;
+                            }
                         }
 
                         string property = commands[i];
-                        string valueStr = commands[i + 1];
-                        int value;
+                        string valueStr = "";
+                        if (i + 1 < commands.Length)
+                            valueStr = commands[i + 1];
+                        int value = 0;
 
                         // Special handling for "battery" and "batteries"
                         if (property.Equals("Battery", StringComparison.OrdinalIgnoreCase) ||
@@ -129,18 +133,21 @@ namespace KTANE_Bot
                             property = "Batteries"; // Use a consistent key for both
                         }
 
-                        if (propertiesDictionary.TryGetValue(valueStr, out value))
+                        if (property != "done" && property != "escape")
                         {
-                            BombProperties[property] = value;
-                        }
-                        else if (int.TryParse(valueStr, out value))
-                        {
-                            BombProperties[property] = value;
-                        }
-                        else
-                        {
-                            message.Append($"Invalid value for {property}. ");
-                            continue;
+                            if (propertiesDictionary.TryGetValue(valueStr, out value))
+                            {
+                                BombProperties[property] = value;
+                            }
+                            else if (int.TryParse(valueStr, out value))
+                            {
+                                BombProperties[property] = value;
+                            }
+                            else
+                            {
+                                message.Append($"Invalid value for {property}. ");
+                                continue;
+                            }
                         }
 
                         // Process the message for each property
@@ -152,7 +159,19 @@ namespace KTANE_Bot
                                 forceKeepBombCheck = false;
                                 _state = States.Waiting;
                                 SwitchDefaultSpeechRecognizer(Solvers.Default);
-                                return message.ToString() + "Cancelled";
+
+                                Random rng = new Random();
+
+                                foreach (var key in BombProperties.Keys.ToList())
+                                {
+                                    if (BombProperties[key] == -1)
+                                    {
+                                        // Randomize value for each missing property
+                                        BombProperties[key] = rng.Next(0, 2); // Assuming 'rng' is a Random instance
+                                    }
+                                }
+
+                                return message.ToString() + "Done";
                             case "Batteries":
                             case "Battery":
                                 message.Append(value == int.MaxValue ? "Many " : $"{value} " + (value == 1 ? "battery " : "batteries "));

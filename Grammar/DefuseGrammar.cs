@@ -59,12 +59,14 @@ namespace KTANE_Bot
 
             // Create a sequence of command pairs
             var commandSequence = new GrammarBuilder();
-            commandSequence.Append(commandChoices, 1, 6); // Allow sequences of 1 to 6 command pairs
-
+            commandSequence.Append(commandChoices, 1, 6); // Allow sequences of 
+                                                          // Include 'done' as an optional part of the sequence
             var done = new GrammarBuilder("done");
+            commandSequence.Append(new Choices(done), 0, 1); // 'done' can appear 0 or 1 times
+
             var escape = new GrammarBuilder("ESCAPE MODULE");
 
-            var allChoices = new Choices(new GrammarBuilder[] { commandSequence, done, escape });
+            var allChoices = new Choices(new GrammarBuilder[] { commandSequence, escape });
 
             return new Grammar(new GrammarBuilder(allChoices)) { Name = "Bomb Check Grammar" };
         }

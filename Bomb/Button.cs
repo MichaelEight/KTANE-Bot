@@ -9,8 +9,8 @@ namespace KTANE_Bot
         private readonly string _color;
         private readonly string _label;
 
-        private const string Hold = "Hold; tell me stripe colour.";
-        private const string Press = "Press and immediately release.";
+        private const string Hold = "Hold, what's stripe colour";
+        private const string Press = "Press and immediately release";
 
         public Button(Bomb bomb, string color, string label) : base(bomb)
         {
