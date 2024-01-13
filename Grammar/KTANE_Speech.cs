@@ -148,10 +148,10 @@ namespace KTANE_Bot
                             message = value == 0 ? "No CAR label." : "Lit CAR label.";
                             break;
                         case "Vowel":
-                            message = value == 0 ? "No vowel in serial." : "Vowel in serial.";
+                            message = value == 0 ? "No vowel" : "Vowel in serial.";
                             break;
                         case "Digit":
-                            message = value == 0 ? "Last digit is even." : "Last digit is odd.";
+                            message = value == 0 ? "Last digit even" : "Last digit odd";
                             break;
                         default:
                             message = "";
@@ -331,8 +331,8 @@ namespace KTANE_Bot
 
                             SwitchToDefaultProperties();
                             return Button.Solve(command.Split(' ')[0]);
-                        
-                        //SYMBOLS SOLVER.
+
+                        // SYMBOLS SOLVER.
                         case Solvers.Symbols:
                             if (command == "ESCAPE MODULE")
                             {
@@ -345,15 +345,19 @@ namespace KTANE_Bot
 
                             var symbols = (Symbols)_defusingModule;
 
-                            if (symbols.InputLength < 3)
+                            // Handle multiple symbol inputs
+                            var symbolCommands = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var symbol in symbolCommands)
                             {
-                                symbols.AppendSymbol(command);
-                                return $"{command}; next.";
+                                symbols.AppendSymbol(symbol);
+                                if (symbols.InputLength == 4) break; // Stop if 4 symbols are reached
                             }
 
-                            symbols.AppendSymbol(command);
+                            if (symbols.InputLength < 4) return $"{command}; next.";
+
                             SwitchToDefaultProperties();
                             return $"{command}; done. {symbols.Solve()}";
+
 
                         //MEMORY SOLVER.
                         case Solvers.Memory:

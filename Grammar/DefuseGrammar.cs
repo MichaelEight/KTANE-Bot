@@ -172,10 +172,16 @@ namespace KTANE_Bot
 
         private static Grammar _SymbolsGrammar()
         {
-            var choices = new Choices(File.ReadAllLines(@"Symbols.txt"));
-            choices.Add("ESCAPE MODULE"); // Add "done" command
-            return new Grammar(new GrammarBuilder(choices)) { Name = "Symbols Grammar" };
+            var symbols = new Choices(File.ReadAllLines(@"Symbols.txt"));
+            var symbolSequence = new GrammarBuilder();
+            symbolSequence.Append(symbols, 1, 4); // Allow sequences of 1 to 4 symbols
+
+            var commands = new Choices(new string[] { "ESCAPE MODULE" });
+            var allChoices = new Choices(new GrammarBuilder[] { symbolSequence, commands });
+
+            return new Grammar(new GrammarBuilder(allChoices)) { Name = "Symbols Grammar" };
         }
+
 
 
         private static Grammar _PasswordGrammar()
