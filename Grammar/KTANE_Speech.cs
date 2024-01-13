@@ -266,16 +266,50 @@ namespace KTANE_Bot
                         switch (command)
                         {
                             case "The bomb exploded":
-                                var dismissingMessages = new[] { "Aww :(", "It's your fault.", "Think faster.", "You're useless.", "We tried our best." };
-                                
+                                var dismissingMessages = new[]
+                                {
+                                    "Aww :(",
+                                    "It's your fault.",
+                                    "Think faster.",
+                                    "You're useless.",
+                                    "We tried our best.",
+                                    "Better luck next time.",
+                                    "That was close!",
+                                    "Oops, that wasn't supposed to happen.",
+                                    "Back to square one.",
+                                    "So close, yet so far.",
+                                    "Not our day, huh?",
+                                    "That was a tough one.",
+                                    "Mistakes were made.",
+                                    "Well, that escalated quickly.",
+                                    "I guess it's just not your day."
+                                };
+
                                 if (Form1.ResetBomb)
                                     ResetBomb();
                                 
                                 return dismissingMessages[rng.Next(0, dismissingMessages.Length)];
                             
                             case "The bomb is defused":
-                                var congratulatoryMessages = new[] { "Good job!", "Nice!", "You did it!", "Yay!", "Woo-hoo!", "Congratulations!" };
-                                
+                                var congratulatoryMessages = new[]
+                                {
+                                    "Good job!",
+                                    "Nice!",
+                                    "You did it!",
+                                    "Yay!",
+                                    "Woo-hoo!",
+                                    "Congratulations!",
+                                    "That's how it's done!",
+                                    "You're a natural!",
+                                    "Expertly handled!",
+                                    "You're on fire!",
+                                    "Absolutely brilliant!",
+                                    "You nailed it!",
+                                    "That was impressive!",
+                                    "You're a hero!",
+                                    "Masterfully done!"
+                                };
+
                                 if (Form1.ResetBomb)
                                     ResetBomb();
                                 
