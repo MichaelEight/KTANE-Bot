@@ -201,20 +201,20 @@ namespace KTANE_Bot
         private static Grammar _SequenceGrammar()
         {
             var letters = new Choices("alpha", "bravo", "charlie");
+            var colors = new Choices("red", "blue", "black");
+            var colorLetterSequence = new GrammarBuilder();
+            colorLetterSequence.Append(colors);
+            colorLetterSequence.Append(letters);
 
-            var red = new GrammarBuilder("red");
-            var blue = new GrammarBuilder("blue");
-            var black = new GrammarBuilder("black");
-            var done = new GrammarBuilder("done");
-            
-            red.Append(letters);
-            blue.Append(letters);
-            black.Append(letters);
+            var sequenceChoices = new GrammarBuilder();
+            sequenceChoices.Append(colorLetterSequence, 1, 4); // Allow sequences of 1 to 4 color-letter combinations
 
-            var allChoices = new Choices(new GrammarBuilder[] { red, black, blue, done });
+            var commands = new Choices(new string[] { "done" });
+            var allChoices = new Choices(new GrammarBuilder[] { sequenceChoices, commands });
 
-            return new Grammar(allChoices) {Name = "Sequence Grammar"};
+            return new Grammar(new GrammarBuilder(allChoices)) { Name = "Sequence Grammar" };
         }
+
 
         private static Grammar _ComplicatedGrammar()
         {

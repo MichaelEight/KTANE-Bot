@@ -416,7 +416,8 @@ namespace KTANE_Bot
                             simon.AppendColor(command);
                             return simon.Solve();
 
-                        //WIRE SEQUENCE SOLVER.
+
+                        // WIRE SEQUENCE SOLVER.
                         case Solvers.Sequence:
                             if (command == "done")
                             {
@@ -428,9 +429,25 @@ namespace KTANE_Bot
                                 _defusingModule = new Sequence(_bomb);
 
                             var sequence = (Sequence)_defusingModule;
-                            sequence.InitializeValues(command.Split(' ')[0], command.Split(' ')[1]);
-                            return sequence.Solve();
-                        
+                            var sequenceCommands = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            var responses = new List<string>(); // List to store responses for each pair
+
+                            // Process each color-letter pair
+                            for (int i = 0; i < sequenceCommands.Length; i += 2)
+                            {
+                                if (i + 1 >= sequenceCommands.Length)
+                                {
+                                    return "Incomplete sequence command. Please provide both color and letter.";
+                                }
+                                sequence.InitializeValues(sequenceCommands[i], sequenceCommands[i + 1]);
+                                responses.Add(sequence.Solve());
+                            }
+
+                            // Join and return all responses
+                            return string.Join(", ", responses);
+
+
+
                         //WHO'S ON FIRST.
                         case Solvers.WhoIsOnFirst:
                             if (command == "ESCAPE MODULE")
