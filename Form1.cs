@@ -114,7 +114,7 @@ namespace KTANE_Bot
                 },
                 { 
                     "Memory Grammar",
-                    "Numbers <all four numbers that you see>."
+                    "To escape say \"escape module\"\n<all five numbers that you see>."
                 },
                 {
                     "Bomb Check Grammar",
