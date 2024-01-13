@@ -90,13 +90,27 @@ namespace KTANE_Bot
 
         private static Grammar _MemoryGrammar()
         {
-            var grammarBuilder = new GrammarBuilder();
-            grammarBuilder.Append("Numbers", 1, 7);
-            grammarBuilder.AppendDictation(category: "numbers");
-            grammarBuilder.Append(new Choices("ESCAPE MODULE")); // Add "done" command
+            // Define choices for digits
+            var digits = new Choices();
+            for (int i = 1; i <= 4; i++)
+            {
+                digits.Add(i.ToString());
+            }
 
-            return new Grammar(grammarBuilder) { Name = "Memory Grammar" };
+            // Create a GrammarBuilder for digit sequences
+            var digitSequence = new GrammarBuilder();
+            digitSequence.Append(digits, 5, 5); // Allow sequences of 1 to 5 digits
+
+            // Create a GrammarBuilder for the "ESCAPE MODULE" command
+            var escapeCommand = new GrammarBuilder("ESCAPE MODULE");
+
+            // Combine digit sequences and escape command into a single Choices
+            var choices = new Choices(new GrammarBuilder[] { digitSequence, escapeCommand });
+
+            // Create and return the Grammar
+            return new Grammar(choices) { Name = "Memory Grammar" };
         }
+
 
         private static Grammar _WiresGrammar()
         {

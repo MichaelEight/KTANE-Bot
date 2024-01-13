@@ -16,7 +16,11 @@ namespace KTANE_Bot
             { "one", 1 },
             { "two", 2 },
             { "three", 3 },
-            { "four", 4 }
+            { "four", 4 },
+            { "1", 1 },
+            { "2", 2 },
+            { "3", 3 },
+            { "4", 4 }
         };
 
         public Memory(Bomb bomb) : base(bomb)
@@ -169,22 +173,21 @@ namespace KTANE_Bot
 
         public bool SetNumbers(params string[] numbers)
         {
-            if (numbers.Length != 6)
-                return false;
-            
             try
             {
-                _sequence[0] = NumbersDict[numbers[1]];
-                _sequence[1] = NumbersDict[numbers[2]];
-                _sequence[2] = NumbersDict[numbers[3]];
-                _sequence[3] = NumbersDict[numbers[4]];
-                _sequence[4] = NumbersDict[numbers[5]];
+                _sequence[0] = NumbersDict[numbers[0]];
+                _sequence[1] = NumbersDict[numbers[1]];
+                _sequence[2] = NumbersDict[numbers[2]];
+                _sequence[3] = NumbersDict[numbers[3]];
+                _sequence[4] = NumbersDict[numbers[4]];
                 return true;
             }
             catch (KeyNotFoundException)
             {
                 return false;
             }
+
+            return false;
         }
     }
 }
