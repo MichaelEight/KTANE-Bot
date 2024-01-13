@@ -3,10 +3,27 @@
 Using C# default [Speech Recognition Engine](https://docs.microsoft.com/en-us/dotnet/api/system.speech.recognition.speechrecognitionengine?view=netframework-4.8) and C# [Speech Synthesis](https://docs.microsoft.com/en-us/dotnet/api/system.speech.synthesis.speechsynthesizer?view=netframework-4.8), I made a bot that emulates the manual of the video game Keep Talking and Nobody Explodes.
 All modules can be solved using the bot, using the right key-words.
 
+### WHAT IS NEW IN THIS VERSION?
++ Bugfixes: Who's on first doesn't crash the app anymore
++ You can say "Escape Module" to quit most of the modules, in the rest you say "done"
++ You can generate random bomb just by saying "random bomb"
++ While checking the bomb, say "done" to finish checking it and skip the rest
++ You no longer need to say "Numbers" in Memory module. It's more reliable.
++ You can say multiple words at once. You can add something afterwords. Examples:
+  - Wires: "blue red red", "blue" (wait) "red yellow", "black black red red yellow" (wait) "red"
+  - Symbols: "six euro candle", "six" (wait) "euro"
+  - Password: "alpha beta delta hotel", "alpha beta" (wait) "delta hotel"
++ Improved Morse, it's more reliable now
++ Simon now accepts "0 strikes"
++ You can now edit Symbols.txt to introduce your own naming
++ Shortened few messages to make the whole thing faster
++ Added a little pause after few words in "Who's on first" for clarity
++ Improved layout, description on top is a little bit more readable
+
 ### Before you give it a go, make sure that...
 
 + **You are using your default microphone.** The program automatically sets the input to your default audio input device.
-+ **You have installed voices for English.** Microsoft David and Microsoft Zira should appear by default. If they don't, then you might not have installed voice for English.
++ **You have installed voices for English.** Microsoft David and Microsoft Zira should appear by default. If they don't, then you might not have installed voice for English. Note: Changing system language to English might help.
 + **You are using headphones.** You can use speakers too, but you might want to lower the volume, as it might interfere with the audio inputs (the bot can hear itself).
 + **You try different english accents.** This is not my fault. I rarely struggle with my Greek accent, but I haven't tried other accents.
 
@@ -36,7 +53,8 @@ The above affect several modules. So after you say bomb check, say the following
 + Digit <even|odd>.
 + Batteries <0-6|none|more than two>. (If there are more than two batteries, it's better to say "Batteries more than two")
 
-You can also skip this section if you want, by clicking the **"Random Bomb"** button. This button will initialize a bomb with completely random properties. This is likely to be useful, if you want to disarm a module that has nothing to do with the bomb's properties (E.g. The Symbols, or Memory).
+You can also skip this section if you want, by clicking the **"Random Bomb"** button or by saying **"Random Bomb"**. This will initialize a bomb with completely random properties. This is likely to be useful, if you want to disarm a module that has nothing to do with the bomb's properties (E.g. The Symbols, or Memory).
+**(NEW)** You can also start checking the bomb and stop in the middle by saying **"done"** (you can always come back by saying **"bomb check"** again). You can also say "skip bomb" which allows you to skip the check all together (NOT RECOMMENDED)
 
 <br>
 
@@ -55,7 +73,9 @@ E.g.: **Red Detonate** or **White Stripe**.
 #### Key-Word: DEFUSE WIRES
 
 The simple wires are also simple. You state just the color of the wire, then you wait until the bot repeats the color and says "next".
-Unless the number of the wires is exactly six, you have to say "done" when there are no wires left. Then the bot will tell you the index of the wire you have to cut.
+**(NEW)** You don't need to wait! You can say one, two or even all colors at once! 
+Unless the number of the wires is exactly six, you have to say **"done"** when there are no wires left. Then the bot will tell you the index of the wire you have to cut.
+You can say **"wrong"** to cancel the last color.
 
 E.g. **Cut the n-th wire** or **Cut the last wire**.
 
@@ -85,9 +105,10 @@ E.g.: **"Red and White, Nothing" or "Blue, Star" or "Blue and White, Star and Li
 
 #### Key-Word: DEFUSE MEMORY
 
-The Memory module is really straight forward. After saying the word "Numbers", state all five numbers that you see, starting from the display and then going sequentially left-to-right. Be sure to be moderately fast and clear as you state the numbers. A small misspell and it might not understand you. If it doesn't understand you, it will tell you to repeat the numbers that you see.
+The Memory module is really straight forward. ~~After saying the word "Numbers",~~ State all five numbers that you see, starting from the display and then going sequentially left-to-right. Be sure to be moderately fast and clear as you state the numbers. A small misspell and it might not understand you. If it doesn't understand you, it will tell you to repeat the numbers that you see.
+**UPDATE NOTE** You don't need to say "Numbers" anymore. Also it should be more reliable with understanding the numbers now.
 
-E.g.: **"Numbers one, four, one, two, three".**
+E.g.: **"one, four, one, two, three"**
 
 After stating the numbers, the bot will tell you which button to press.
 
@@ -149,7 +170,7 @@ First is line **THEN** column. For example:
 
 #### Key-Word: DEFUSE PASSWORD
 
-For each column, tell the bot the letter you see, either by saying the letter itself (I do not recommend this), or by using the [military alphabet](https://www.wikiwand.com/en/NATO_phonetic_alphabet#:~:text=The%2026%20code%20words%20are,%2Dray%2C%20Yankee%2C%20Zulu.). For each letter, wait until the BOT repeats it and says "next".
+For each column, tell the bot the letter you see, either by saying the letter itself (I do not recommend this), or by using the [military alphabet](https://www.wikiwand.com/en/NATO_phonetic_alphabet#:~:text=The%2026%20code%20words%20are,%2Dray%2C%20Yankee%2C%20Zulu.). ~~For each letter, wait until the BOT repeats it and says "next".~~ You can say one, two or even all letters at once. Still, military alphabet is recommended. 
 
 E.g.: "**Yankee**" or "**Y**".
 
@@ -161,9 +182,10 @@ If the bot finds at most five possible words, it will tell you to try one of the
 
 #### Key-Word: DEFUSE SYMBOLS
 
-Just like Simon Says, there's also a group of people that just memorize the symbols. But if you can't memorize, you have to tell the bot sequentially the symbols you see. **After you state a symbol, wait until the bot repeats it and says "next".** Thereafter naming all four symbols, the bot should say the right order for you to press.
+Just like Simon Says, there's also a group of people that just memorize the symbols. But if you can't memorize, you have to tell the bot sequentially the symbols you see. ~~**After you state a symbol, wait until the bot repeats it and says "next".**~~ You can name one, two, three or four symbols at once. Thereafter naming all four symbols, the bot should say the right order for you to press.
 
 I've named the symbols after what I thought was more obvious. You can take a look at the [Text Document](https://github.com/GeorgeMC2610/KTANE-Bot/blob/master/bin/Debug/Symbols.txt) the program reads to identify the words. Otherwise here are the names:
+**(NEW)** You can update the words on the list yourself, so they better suit you.
 
 ![symbols](https://github.com/GeorgeMC2610/KTANE-Bot/blob/master/SYMBOLS.jpg)
 
