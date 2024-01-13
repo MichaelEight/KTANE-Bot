@@ -85,7 +85,7 @@ namespace KTANE_Bot
                 },
                 {
                     "Wires Grammar",
-                    "To escape say \"escape module\"\n<color> (await for next wire)"
+                    "To escape say \"escape module\"\n<color> (await for next wire)\nOr say multiple colors quickly"
                 },
                 {
                     "Who's On First Grammar",

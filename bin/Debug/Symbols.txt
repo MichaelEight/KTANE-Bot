@@ -1,11 +1,11 @@
 capital queue
-capital ay
+pyramid
 lambda
 lightning
-kitty
+robot
 kappa
-reverse dotted c
-e with umlaut
+reverse c
+euro
 snake
 empty star
 question mark
@@ -15,13 +15,13 @@ ex eye
 three
 six
 paragraph
-tampa bay
+crossed b
 smiley face
-psi
+candle
 dotted c
 evil three
 full star
-dumbbell
+hashtag
 ay ee
-reverse n
+capital h
 capital omega

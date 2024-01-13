@@ -270,7 +270,7 @@ namespace KTANE_Bot
 
                     switch (_solvingModule)
                     {
-                        //WIRES SOLVER.
+                        // WIRES SOLVER.
                         case Solvers.Wires:
                             if (command == "ESCAPE MODULE")
                             {
@@ -280,7 +280,7 @@ namespace KTANE_Bot
 
                             if (_defusingModule == null)
                                 _defusingModule = new Wires(_bomb);
-                            
+
                             var wires = (Wires)_defusingModule;
 
                             if (command == "done")
@@ -291,16 +291,23 @@ namespace KTANE_Bot
 
                             if (command == "wrong")
                             {
-                                return wires.WireCount < 1 ? "To delete a wire, you must first give one." : wires.DeletePreviousWire();
+                                return wires.WireCount < 1 ? "No wires yet" : wires.DeletePreviousWire();
                             }
 
-                            wires.AppendWire(command);
+                            // Handle multiple color inputs
+                            var colorCommands = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var color in colorCommands)
+                            {
+                                wires.AppendWire(color);
+                                if (wires.WireCount >= 6) break; // Stop if 6 wires are reached
+                            }
 
-                            if (wires.WireCount != 6) return $"{command}; next.";
+                            if (wires.WireCount < 6) return $"{command}; next";
 
                             SwitchToDefaultProperties();
                             return $"{command}; done. {wires.Solve()}";
-                        
+
+
                         //BUTTON SOLVER.
                         case Solvers.Button:
                             if (command == "ESCAPE MODULE")

@@ -114,8 +114,16 @@ namespace KTANE_Bot
 
         private static Grammar _WiresGrammar()
         {
-            return new Grammar(new GrammarBuilder(new Choices(new string[] {"yellow", "blue", "black", "white", "red", "done", "ESCAPE MODULE", "wrong"}))) {Name = "Wires Grammar"};
+            var colors = new Choices(new string[] { "yellow", "blue", "black", "white", "red" });
+            var colorSequence = new GrammarBuilder();
+            colorSequence.Append(colors, 1, 6); // Allow sequences of 1 to 6 colors
+
+            var commands = new Choices(new string[] { "done", "ESCAPE MODULE", "wrong" });
+            var allChoices = new Choices(new GrammarBuilder[] { colorSequence, commands });
+
+            return new Grammar(new GrammarBuilder(allChoices)) { Name = "Wires Grammar" };
         }
+
 
         private static Grammar _KnobGrammar()
         {
