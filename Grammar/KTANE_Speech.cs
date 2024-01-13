@@ -507,8 +507,8 @@ namespace KTANE_Bot
                             knob.Lights = command;
                             SwitchToDefaultProperties();
                             return knob.Solve();
-                        
-                        //PASSWORD SOLVER.
+
+                        // PASSWORD SOLVER.
                         case Solvers.Password:
                             if (command == "ESCAPE MODULE")
                             {
@@ -521,18 +521,26 @@ namespace KTANE_Bot
 
                             var password = (Password)_defusingModule;
 
-                            switch (password.AssignLetters(command.ToLower()))
+                            // Handle multiple letter inputs
+                            var letterCommands = command.ToLower().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var letter in letterCommands)
                             {
-                                case -1:
+                                var result = password.AssignLetters(letter);
+                                if (result == -1)
+                                {
                                     return "There can be no duplicate letters in the password. Try again.";
-                                case 2:
-                                    return $"{command[0]}; next";
-                                default:
+                                }
+                                else if (result != 2)
+                                {
                                     if (password.Solve().StartsWith("Try") || password.Solve().StartsWith("Something") || password.Solve().StartsWith("The"))
                                         SwitchToDefaultProperties();
 
                                     return password.Solve();
+                                }
                             }
+
+                            return $"{command}; next";
+
 
                         //MAZE SOLVER.
                         case Solvers.Maze:

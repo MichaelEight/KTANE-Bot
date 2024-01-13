@@ -186,10 +186,16 @@ namespace KTANE_Bot
 
         private static Grammar _PasswordGrammar()
         {
-            var choices = new Choices(File.ReadAllLines(@"Password.txt"));
-            choices.Add("ESCAPE MODULE"); // Add "done" command
-            return new Grammar(new GrammarBuilder(choices)) { Name = "Password Grammar" };
+            var letters = new Choices(File.ReadAllLines(@"Password.txt"));
+            var letterSequence = new GrammarBuilder();
+            letterSequence.Append(letters, 1, 6); // Allow sequences of 1 to 5 letters
+
+            var commands = new Choices(new string[] { "ESCAPE MODULE" });
+            var allChoices = new Choices(new GrammarBuilder[] { letterSequence, commands });
+
+            return new Grammar(new GrammarBuilder(allChoices)) { Name = "Password Grammar" };
         }
+
 
 
         private static Grammar _SequenceGrammar()
