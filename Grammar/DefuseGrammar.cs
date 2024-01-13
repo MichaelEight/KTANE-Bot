@@ -137,10 +137,14 @@ namespace KTANE_Bot
 
         private static Grammar _MorseGrammar()
         {
-            var builder = new GrammarBuilder();
-            builder.AppendDictation();
-            builder.Append(new Choices("ESCAPE MODULE")); // Add "done" command
-            return new Grammar(builder) { Name = "Morse Grammar" };
+            var digits = new Choices("0", "1");
+            var digitSequence = new GrammarBuilder();
+            digitSequence.Append(digits, 1, 10); // Allow sequences of 1 to 10 digits
+
+            var escapeCommand = new GrammarBuilder("ESCAPE MODULE");
+
+            var choices = new Choices(new GrammarBuilder[] { digitSequence, escapeCommand });
+            return new Grammar(choices) { Name = "Morse Grammar" };
         }
 
 

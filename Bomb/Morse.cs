@@ -101,7 +101,9 @@ namespace KTANE_Bot
                 { "zero", "0" },
                 { "one", "1" },
                 { ".", "0" },
-                { "-", "1" }
+                { "-", "1" },
+                { "0", "0" },
+                { "1", "1" }
             };
 
             var numbers = new StringBuilder();

@@ -98,7 +98,7 @@ namespace KTANE_Bot
                 },
                 {
                     "Morse Grammar",
-                    "<0>|<1> (await for next letter) (0 is DOT, 1 is the DASH)"
+                    "To escape say \"escape module\"\n<0>|<1> (await for next letter) (0 = DOT, 1 = DASH)"
                 },
                 {
                     "Knob Grammar",

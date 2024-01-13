@@ -470,7 +470,9 @@ namespace KTANE_Bot
                                     return @"Try again";
                             }
                             else if (!morse.AddLetters(command.Split(' ')))
+                            {
                                 return @"Try again.";
+                            }
                             
                             if (morse.Solve().EndsWith("hertz."))
                                 SwitchToDefaultProperties();
