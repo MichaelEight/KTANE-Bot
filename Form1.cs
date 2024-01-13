@@ -118,7 +118,8 @@ namespace KTANE_Bot
                 },
                 {
                     "Bomb Check Grammar",
-                    "To escape say \"done\"\nBatteries <0-6> or none or more than two|Freak <yes/true/false/no>|Car <yes/true/false/no>|\nVowel <yes/true/false/no>|Port <yes/true/false/no>|Digit <odd/even>"
+                    "To escape say \"done\"\nBatteries <0-6> or none or more/many | Freak <yes/true/false/no> | Car <yes/true/false/no>\n" +
+                    "Vowel <yes/true/false/no> | Port <yes/true/false/no> | Digit <odd/even>"
                 }
             };
 

@@ -31,11 +31,13 @@ namespace KTANE_Bot
         //bomb checking grammar
         private static Grammar _BombCheckGrammar()
         {
-            var batteryChoices = new Choices(new string[] { "none", "0", "1", "2", "more than 2", "3", "4", "5", "6" });
+            var batteryChoices = new Choices(new string[] { "none", "0", "1", "2", "more", "many", "3", "4", "5", "6" });
             var trueOrFalse = new Choices(new string[] { "yes", "no", "true", "false" });
             var oddEven = new Choices(new string[] { "odd", "even" });
 
-            var battery = new GrammarBuilder("Batteries");
+            var batteries = new GrammarBuilder("Batteries");
+            batteries.Append(batteryChoices);
+            var battery = new GrammarBuilder("Battery");
             battery.Append(batteryChoices);
 
             var parallelPort = new GrammarBuilder("Port");
@@ -53,7 +55,7 @@ namespace KTANE_Bot
             var digit = new GrammarBuilder("Digit");
             digit.Append(oddEven);
 
-            var commandChoices = new Choices(new GrammarBuilder[] { battery, parallelPort, frk, car, vowel, digit });
+            var commandChoices = new Choices(new GrammarBuilder[] { battery, batteries, parallelPort, frk, car, vowel, digit });
 
             // Create a sequence of command pairs
             var commandSequence = new GrammarBuilder();

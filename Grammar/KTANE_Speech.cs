@@ -95,16 +95,17 @@ namespace KTANE_Bot
             {
                 case States.Checking:
                     var propertiesDictionary = new Dictionary<string, int>
-    {
-        { "yes", 1 },
-        { "true", 1 },
-        { "odd", 1 },
-        { "false", 0 },
-        { "no", 0 },
-        { "none", 0 },
-        { "even", 0 },
-        { "more", int.MaxValue }
-    };
+                    {
+                        { "yes", 1 },
+                        { "true", 1 },
+                        { "odd", 1 },
+                        { "false", 0 },
+                        { "no", 0 },
+                        { "none", 0 },
+                        { "even", 0 },
+                        { "many", int.MaxValue },
+                        { "more", int.MaxValue }
+                    };
 
                     var commands = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     var message = new StringBuilder();
@@ -120,6 +121,13 @@ namespace KTANE_Bot
                         string property = commands[i];
                         string valueStr = commands[i + 1];
                         int value;
+
+                        // Special handling for "battery" and "batteries"
+                        if (property.Equals("Battery", StringComparison.OrdinalIgnoreCase) ||
+                            property.Equals("Batteries", StringComparison.OrdinalIgnoreCase))
+                        {
+                            property = "Batteries"; // Use a consistent key for both
+                        }
 
                         if (propertiesDictionary.TryGetValue(valueStr, out value))
                         {
@@ -147,7 +155,7 @@ namespace KTANE_Bot
                                 return message.ToString() + "Cancelled";
                             case "Batteries":
                             case "Battery":
-                                message.Append(value == int.MaxValue ? "More batteries " : $"{value} " + (value == 1 ? "battery " : "batteries "));
+                                message.Append(value == int.MaxValue ? "Many " : $"{value} " + (value == 1 ? "battery " : "batteries "));
                                 break;
                             case "Port":
                                 message.Append(value == 0 ? "No port" : "Yes port ");
