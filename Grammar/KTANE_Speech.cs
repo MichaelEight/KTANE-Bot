@@ -64,6 +64,7 @@ namespace KTANE_Bot
             { "Defuse simon", Solvers.Simon },
             { "Defuse sequence", Solvers.Sequence },
             { "Defuse who is on first", Solvers.WhoIsOnFirst },
+            { "Defuse who first", Solvers.WhoIsOnFirst },
             { "Defuse morse", Solvers.Morse },
             { "Defuse knob", Solvers.Knob },
             { "Defuse password", Solvers.Password },
@@ -221,10 +222,11 @@ namespace KTANE_Bot
                                 additionalInfo = ", first letter";
                                 break;
                             case "Defuse who is on first":
-                                additionalInfo = "first, what's on the display?";
+                            case "Defuse who first":
+                                additionalInfo = "first, what's displayed?";
                                 break;
                             case "Defuse maze":
-                                additionalInfo = "; Any green circle coordinates.";
+                                additionalInfo = "; green circle coordinates";
                                 break;
                             case "Defuse password":
                                 additionalInfo = "; Column 1";
