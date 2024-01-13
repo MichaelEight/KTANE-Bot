@@ -218,7 +218,7 @@ namespace KTANE_Bot
 
         private static Grammar _SimonSaysGrammar()
         {
-            var strikeChoices = new Choices("1", "2");
+            var strikeChoices = new Choices("0", "1", "2");
             var strikeBuilder = new GrammarBuilder("strikes");
             
             strikeBuilder.Append(strikeChoices);

@@ -81,7 +81,7 @@ namespace KTANE_Bot
                 },
                 {
                     "Simon Says Grammar",
-                    "To escape say \"done\"\n<color that flashes last>" 
+                    "To escape say \"done\"\n<color that flashes last>\nstrikes <0/1/2>" 
                 },
                 {
                     "Wires Grammar",
