@@ -215,7 +215,7 @@ namespace KTANE_Bot
 
                         SwitchDefaultSpeechRecognizer(Solvers.Check);
                         _state = States.Checking;
-                        return "Start checking phase";
+                        return "Start checking";
                     }
 
                     if(command == "Bomb check")
@@ -223,7 +223,7 @@ namespace KTANE_Bot
                         forceKeepBombCheck = true;
                         SwitchDefaultSpeechRecognizer(Solvers.Check);
                         _state = States.Checking;
-                        return "Start checking phase";
+                        return "Start checking";
                     }
 
                     
@@ -339,22 +339,29 @@ namespace KTANE_Bot
                                 _defusingModule = new Wires(_bomb);
 
                             var wires = (Wires)_defusingModule;
-
-                            if (command == "done")
-                            {
-                                SwitchToDefaultProperties();
-                                return "Done; " + wires.Solve();
-                            }
-
-                            if (command == "wrong")
-                            {
-                                return wires.WireCount < 1 ? "No wires yet" : wires.DeletePreviousWire();
-                            }
-
-                            // Handle multiple color inputs
                             var colorCommands = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
                             foreach (var color in colorCommands)
                             {
+                                if (color.Equals("done", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var result = wires.Solve();
+                                    if(result.StartsWith("You must give"))
+                                    {
+                                        return result;
+                                    }
+                                    else
+                                    {
+                                        SwitchToDefaultProperties();
+                                        return "Done; " + result;
+                                    }
+                                }
+
+                                if (color.Equals("wrong", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    return wires.WireCount < 1 ? "No wires yet" : wires.DeletePreviousWire();
+                                }
+
                                 wires.AppendWire(color);
                                 if (wires.WireCount >= 6) break; // Stop if 6 wires are reached
                             }
@@ -363,6 +370,7 @@ namespace KTANE_Bot
 
                             SwitchToDefaultProperties();
                             return $"{command}; done. {wires.Solve()}";
+
 
 
                         //BUTTON SOLVER.
