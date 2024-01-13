@@ -559,47 +559,74 @@ namespace KTANE_Bot
                             return $"{command}; next";
 
 
-                        //MAZE SOLVER.
+                        // MAZE SOLVER.
                         case Solvers.Maze:
                             if (command == "ESCAPE MODULE")
                             {
                                 SwitchToDefaultProperties();
                                 return "Cancelled";
                             }
-                            
+
                             if (_defusingModule == null)
                                 _defusingModule = new Maze(_bomb);
 
                             var maze = (Maze)_defusingModule;
+                            var coordinateCommands = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                            if (maze.TargetMaze == null)
+                            for (int i = 0; i < coordinateCommands.Length; i += 2)
                             {
-                                if (maze.AssignCircle(int.Parse(command[0].ToString()), int.Parse(command[2].ToString())))
-                                    return "White square coordinates.";
-
-                                return "Try again";
-                            }
-                            
-                            if (maze.SquareLocation.X == -1 || maze.SquareLocation.Y == -1)
-                            {
-                                maze.SetSquare(int.Parse(command[0].ToString()), int.Parse(command[2].ToString()));
-                                return "Triangle coordinates.";
-                            }
-
-                            if (maze.TriangleLocation.X == -1 || maze.TriangleLocation.Y == -1)
-                            {
-                                maze.SetTriangle(int.Parse(command[0].ToString()), int.Parse(command[2].ToString()));
-                                
-                                if (maze.TriangleLocation.X == maze.SquareLocation.X &&
-                                    maze.TriangleLocation.Y == maze.SquareLocation.Y)
+                                if (i + 1 >= coordinateCommands.Length)
                                 {
-                                    maze.SetTriangle(0, 0);
-                                    return "Square and triangle must be in different places; try again.";
+                                    return "Incomplete coordinate pair.";
                                 }
+
+                                int x = int.Parse(coordinateCommands[i]);
+                                int y = int.Parse(coordinateCommands[i + 1]);
+
+                                // Assign circle coordinates
+                                if (maze.TargetMaze == null)
+                                {
+                                    if (!maze.AssignCircle(x, y))
+                                        return "Invalid circle coordinates. Try again.";
+                                    continue;
+                                }
+
+                                // Set square location
+                                if (maze.SquareLocation.X == -1 || maze.SquareLocation.Y == -1)
+                                {
+                                    maze.SetSquare(x, y);
+                                    continue;
+                                }
+
+                                // Set triangle location
+                                if (maze.TriangleLocation.X == -1 || maze.TriangleLocation.Y == -1)
+                                {
+                                    maze.SetTriangle(x, y);
+                                    if (maze.TriangleLocation.X == maze.SquareLocation.X && maze.TriangleLocation.Y == maze.SquareLocation.Y)
+                                    {
+                                        maze.SetTriangle(0, 0);
+                                        return "Square and triangle must be in different places; try again.";
+                                    }
+                                    break; // Break after setting triangle as it's the last step
+                                }
+                            }
+
+                            // Check if all inputs are set
+                            if (maze.TargetMaze == null || maze.SquareLocation.X == -1 || maze.TriangleLocation.X == -1)
+                            {
+                                if (maze.TargetMaze == null)
+                                    return "where's green circle";
+                                else if (maze.SquareLocation.X == -1)
+                                    return "where's white square";
+                                else if (maze.TriangleLocation.X == -1)
+                                    return "where's triangle";
                             }
 
                             SwitchToDefaultProperties();
                             return maze.Solve();
+
+
+
 
                         default:
                             throw new ArgumentOutOfRangeException();

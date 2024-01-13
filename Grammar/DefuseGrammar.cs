@@ -135,27 +135,19 @@ namespace KTANE_Bot
         private static Grammar _MazeGrammar()
         {
             var numbers = new Choices("1", "2", "3", "4", "5", "6");
+            var coordinate = new GrammarBuilder();
+            coordinate.Append(numbers);
+            coordinate.Append(numbers); // Each coordinate consists of two numbers
 
-            var one = new GrammarBuilder("1");
-            var two = new GrammarBuilder("2");
-            var three = new GrammarBuilder("3");
-            var four = new GrammarBuilder("4");
-            var five = new GrammarBuilder("5");
-            var six = new GrammarBuilder("6");
-            var done = new GrammarBuilder("ESCAPE MODULE");
-            
-            one.Append(numbers);
-            two.Append(numbers);
-            three.Append(numbers);
-            four.Append(numbers);
-            five.Append(numbers);
-            six.Append(numbers);
-            
-            
-            var allChoices = new Choices(new GrammarBuilder[] { one, two, three, four, five, six, done });
-            
-            return new Grammar(allChoices) {Name = "Maze Grammar"};
+            var coordinateSequence = new GrammarBuilder();
+            coordinateSequence.Append(coordinate, 1, 3); // Allow sequences of 1 to 3 coordinates
+
+            var commands = new Choices(new string[] { "ESCAPE MODULE" });
+            var allChoices = new Choices(new GrammarBuilder[] { coordinateSequence, commands });
+
+            return new Grammar(new GrammarBuilder(allChoices)) { Name = "Maze Grammar" };
         }
+
 
         private static Grammar _MorseGrammar()
         {
