@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
+using System.Text;
 using System.Windows.Forms;
 
 namespace KTANE_Bot
@@ -92,86 +94,99 @@ namespace KTANE_Bot
             switch (_state)
             {
                 case States.Checking:
-                    //identify, using the following dict, what the different values mean.
                     var propertiesDictionary = new Dictionary<string, int>
-                    {
-                        { "yes", 1 },
-                        { "true", 1 },
-                        { "odd", 1 },
-                        { "false", 0 },
-                        { "no", 0 },
-                        { "none", 0},
-                        { "even", 0 },
-                        { "more", int.MaxValue }
-                    };
-                    
-                    int value = 0;
-                    //the value is going to be assigned according to the dict above. 
-                    if (command.Contains(' '))
-                    {
-                        try
-                        {
-                            value = propertiesDictionary[command.Split(' ')[1]];
-                        }
-                        //if the value is not in the dict, then it's a plain number.
-                        catch (KeyNotFoundException)
-                        {
-                            value = int.Parse(command.Split(' ')[1]);
-                        }
-                    }
+    {
+        { "yes", 1 },
+        { "true", 1 },
+        { "odd", 1 },
+        { "false", 0 },
+        { "no", 0 },
+        { "none", 0 },
+        { "even", 0 },
+        { "more", int.MaxValue }
+    };
 
-                    //set the property to be the value we assigned before.
-                    BombProperties[command.Split(' ')[0]] = value;
-                    
-                    //process the message to be sent.
-                    var message = "";
-                    switch (command.Split(' ')[0])
+                    var commands = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var message = new StringBuilder();
+
+                    for (int i = 0; i < commands.Length; i += 2)
                     {
-                        case "ESCAPE":
-                        case "done":
-                            BombParamsSkipped = true;
-                            forceKeepBombCheck = false;
-                            _state = States.Waiting;
-                            SwitchDefaultSpeechRecognizer(Solvers.Default);
-                            break;
-                        case "Batteries":
-                        case "Battery":
-                            message = value == int.MaxValue ? "More than two batteries." : $"{value} " + (value == 1? "battery" : "batteries");
-                            break;
-                        case "Port":
-                            message = value == 0 ? "No parallel port." : "Yes parallel port.";
-                            break;
-                        case "Freak":
-                            message = value == 0 ? "No FRK label." : "Lit FRK label.";
-                            break;
-                        case "Car":
-                            message = value == 0 ? "No CAR label." : "Lit CAR label.";
-                            break;
-                        case "Vowel":
-                            message = value == 0 ? "No vowel" : "Vowel in serial.";
-                            break;
-                        case "Digit":
-                            message = value == 0 ? "Last digit even" : "Last digit odd";
-                            break;
-                        default:
-                            message = "";
-                            break;
+                        if (i + 1 >= commands.Length)
+                        {
+                            message.Append("Incomplete command. ");
+                            continue;
+                        }
+
+                        string property = commands[i];
+                        string valueStr = commands[i + 1];
+                        int value;
+
+                        if (propertiesDictionary.TryGetValue(valueStr, out value))
+                        {
+                            BombProperties[property] = value;
+                        }
+                        else if (int.TryParse(valueStr, out value))
+                        {
+                            BombProperties[property] = value;
+                        }
+                        else
+                        {
+                            message.Append($"Invalid value for {property}. ");
+                            continue;
+                        }
+
+                        // Process the message for each property
+                        switch (property)
+                        {
+                            case "ESCAPE":
+                            case "done":
+                                BombParamsSkipped = true;
+                                forceKeepBombCheck = false;
+                                _state = States.Waiting;
+                                SwitchDefaultSpeechRecognizer(Solvers.Default);
+                                return message.ToString() + "Cancelled";
+                            case "Batteries":
+                            case "Battery":
+                                message.Append(value == int.MaxValue ? "More batteries " : $"{value} " + (value == 1 ? "battery " : "batteries "));
+                                break;
+                            case "Port":
+                                message.Append(value == 0 ? "No port" : "Yes port ");
+                                break;
+                            case "Freak":
+                                message.Append(value == 0 ? "No FRK " : "Lit FRK ");
+                                break;
+                            case "Car":
+                                message.Append(value == 0 ? "No CAR " : "Lit CAR ");
+                                break;
+                            case "Vowel":
+                                message.Append(value == 0 ? "No vowel " : "Yes Vowel ");
+                                break;
+                            case "Digit":
+                                message.Append(value == 0 ? "Digit even " : "Digit odd ");
+                                break;
+                            default:
+                                message.Append($"Unknown property: {property}. ");
+                                break;
+                        }
                     }
 
                     if (!BombProperties.ContainsValue(-1) && !forceKeepBombCheck)
                     {
-                        _bomb = new Bomb(BombProperties["Batteries"], 
+                        _bomb = new Bomb(BombProperties["Batteries"],
                             BombProperties["Port"] == 1,
-                            BombProperties["Freak"] == 1, 
-                            BombProperties["Car"] == 1, 
+                            BombProperties["Freak"] == 1,
+                            BombProperties["Car"] == 1,
                             BombProperties["Vowel"] == 1,
                             BombProperties["Digit"] == 0);
-                        message += " Done.";
+                        message.Append(" Done.");
                         _state = States.Waiting;
                         SwitchDefaultSpeechRecognizer(Solvers.Default);
                     }
-                    
-                    return message;
+
+                    return message.ToString();
+
+
+
                 case States.Waiting:
                     if (command == "Random Bomb")
                     {
@@ -344,12 +359,26 @@ namespace KTANE_Bot
                                 _defusingModule = new Symbols(_bomb);
 
                             var symbols = (Symbols)_defusingModule;
+                            var allSymbols = File.ReadAllLines(@"Symbols.txt");
 
-                            // Handle multiple symbol inputs
-                            var symbolCommands = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                            foreach (var symbol in symbolCommands)
+                            // Process the command for multi-word symbols
+                            var words = command.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            var symbolBuilder = new StringBuilder();
+                            foreach (var word in words)
                             {
-                                symbols.AppendSymbol(symbol);
+                                symbolBuilder.Append(word);
+                                var currentSymbol = symbolBuilder.ToString();
+
+                                if (allSymbols.Contains(currentSymbol))
+                                {
+                                    symbols.AppendSymbol(currentSymbol);
+                                    symbolBuilder.Clear(); // Reset for the next symbol
+                                }
+                                else
+                                {
+                                    symbolBuilder.Append(" "); // Add space for multi-word symbols
+                                }
+
                                 if (symbols.InputLength == 4) break; // Stop if 4 symbols are reached
                             }
 
@@ -357,6 +386,7 @@ namespace KTANE_Bot
 
                             SwitchToDefaultProperties();
                             return $"{command}; done. {symbols.Solve()}";
+
 
 
                         //MEMORY SOLVER.

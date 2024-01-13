@@ -27,46 +27,46 @@ namespace KTANE_Bot
         {
             return new Grammar(new GrammarBuilder(new Choices(File.ReadAllLines(@"Defuse.txt")))) {Name = "Standard Defuse Grammar"};
         }
-        
+
         //bomb checking grammar
         private static Grammar _BombCheckGrammar()
         {
-            var batteryChoices = new Choices(new string[] {"none", "0", "1", "2", "more than 2", "3", "4", "5", "6"});
-            var countBatteries = new GrammarBuilder(batteryChoices);
-            var trueOrFalse = new Choices(new string[] {"yes", "no", "true", "false"});
-            var oddEven = new Choices(new string[] {"odd", "even"});
+            var batteryChoices = new Choices(new string[] { "none", "0", "1", "2", "more than 2", "3", "4", "5", "6" });
+            var trueOrFalse = new Choices(new string[] { "yes", "no", "true", "false" });
+            var oddEven = new Choices(new string[] { "odd", "even" });
 
-            // Add "done" command
-            var done = new GrammarBuilder("done");
-            var escape = new GrammarBuilder("ESCAPE MODULE");
-
-            //batteries
             var battery = new GrammarBuilder("Batteries");
-            battery.Append(countBatteries);
-                
-            //parallel port
+            battery.Append(batteryChoices);
+
             var parallelPort = new GrammarBuilder("Port");
             parallelPort.Append(trueOrFalse);
-                
-            //frk, interpreted as the word "freak".
+
             var frk = new GrammarBuilder("Freak");
             frk.Append(trueOrFalse);
-                
-            //car, interpreted as the word "car".
+
             var car = new GrammarBuilder("Car");
             car.Append(trueOrFalse);
-                
-            //vowel in serial number
+
             var vowel = new GrammarBuilder("Vowel");
             vowel.Append(trueOrFalse);
-                
-            //last number of serial number
+
             var digit = new GrammarBuilder("Digit");
             digit.Append(oddEven);
 
-            var allChoices = new Choices(new GrammarBuilder[] { battery, vowel, parallelPort, digit, frk, car, done, escape });
-            return new Grammar(allChoices) {Name = "Bomb Check Grammar"};
+            var commandChoices = new Choices(new GrammarBuilder[] { battery, parallelPort, frk, car, vowel, digit });
+
+            // Create a sequence of command pairs
+            var commandSequence = new GrammarBuilder();
+            commandSequence.Append(commandChoices, 1, 6); // Allow sequences of 1 to 6 command pairs
+
+            var done = new GrammarBuilder("done");
+            var escape = new GrammarBuilder("ESCAPE MODULE");
+
+            var allChoices = new Choices(new GrammarBuilder[] { commandSequence, done, escape });
+
+            return new Grammar(new GrammarBuilder(allChoices)) { Name = "Bomb Check Grammar" };
         }
+
 
         private static Grammar _ButtonGrammar()
         {
