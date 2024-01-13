@@ -122,6 +122,7 @@ namespace KTANE_Bot
                     switch (command.Split(' ')[0])
                     {
                         case "Batteries":
+                        case "Battery":
                             message = value == int.MaxValue ? "More than two batteries." : $"{value} " + (value == 1? "battery" : "batteries");
                             break;
                         case "Port":

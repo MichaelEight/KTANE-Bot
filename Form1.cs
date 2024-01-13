@@ -77,7 +77,7 @@ namespace KTANE_Bot
                 },
                 {
                     "Symbols Grammar",
-                    "<symbol> (await for next symbol). I have no idea how to explain this. Check SymbolsGrammar.txt to see all available symbols."
+                    "<symbol> (await for next symbol). I have no idea how to explain this. Check Symbols.txt to see all available symbols."
                 },
                 { "Maze Grammar", "<0-6>, <0-6>. To escape say \"escape module\"." },
                 { "Memory Grammar", "Numbers <all four numbers that you see>." },
