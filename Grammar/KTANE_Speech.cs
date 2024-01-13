@@ -42,6 +42,8 @@ namespace KTANE_Bot
         private Bomb _bomb;
         private States _state;
         private Solvers _solvingModule;
+        private bool BombParamsSkipped = false;
+        private bool forceKeepBombCheck = false; 
         public Dictionary<string, int> BombProperties = new Dictionary<string, int>
         {
             {"Batteries", -1},
@@ -102,16 +104,19 @@ namespace KTANE_Bot
                         { "more", int.MaxValue }
                     };
                     
+                    int value = 0;
                     //the value is going to be assigned according to the dict above. 
-                    int value;
-                    try
+                    if (command.Contains(' '))
                     {
-                        value = propertiesDictionary[command.Split(' ')[1]];
-                    }
-                    //if the value is not in the dict, then it's a plain number.
-                    catch (KeyNotFoundException)
-                    {
-                        value = int.Parse(command.Split(' ')[1]);
+                        try
+                        {
+                            value = propertiesDictionary[command.Split(' ')[1]];
+                        }
+                        //if the value is not in the dict, then it's a plain number.
+                        catch (KeyNotFoundException)
+                        {
+                            value = int.Parse(command.Split(' ')[1]);
+                        }
                     }
 
                     //set the property to be the value we assigned before.
@@ -121,6 +126,13 @@ namespace KTANE_Bot
                     var message = "";
                     switch (command.Split(' ')[0])
                     {
+                        case "ESCAPE":
+                        case "done":
+                            BombParamsSkipped = true;
+                            forceKeepBombCheck = false;
+                            _state = States.Waiting;
+                            SwitchDefaultSpeechRecognizer(Solvers.Default);
+                            break;
                         case "Batteries":
                         case "Battery":
                             message = value == int.MaxValue ? "More than two batteries." : $"{value} " + (value == 1? "battery" : "batteries");
@@ -140,9 +152,12 @@ namespace KTANE_Bot
                         case "Digit":
                             message = value == 0 ? "Last digit is even." : "Last digit is odd.";
                             break;
+                        default:
+                            message = "";
+                            break;
                     }
 
-                    if (!BombProperties.ContainsValue(-1))
+                    if (!BombProperties.ContainsValue(-1) && !forceKeepBombCheck)
                     {
                         _bomb = new Bomb(BombProperties["Batteries"], 
                             BombProperties["Port"] == 1,
@@ -157,17 +172,37 @@ namespace KTANE_Bot
                     
                     return message;
                 case States.Waiting:
+                    if (command == "Random Bomb")
+                    {
+                        InitializeRandomBomb();
+                        return "Generated random bomb";
+                    }
+
+                    if (command == "Skip Bomb")
+                    {
+                        return "Bomb check skipped";
+                    }
+
                     //if the user hasn't yet initialized the bomb
-                    if (_bomb == null)
+                    if ((_bomb == null || BombProperties.ContainsValue(-1)) && !BombParamsSkipped)
                     {
                         if (command != "Bomb check")
-                            return "You must first initialize the bomb. (Say \"Bomb check\" to do so)";
+                            return "Initialize bomb by saying \"Bomb check\"";
 
                         SwitchDefaultSpeechRecognizer(Solvers.Check);
                         _state = States.Checking;
-                        return "Start checking phase.";
+                        return "Start checking phase";
                     }
 
+                    if(command == "Bomb check")
+                    {
+                        forceKeepBombCheck = true;
+                        SwitchDefaultSpeechRecognizer(Solvers.Check);
+                        _state = States.Checking;
+                        return "Start checking phase";
+                    }
+
+                    
                     //if the bomb is initialized.
                     try
                     {
@@ -186,7 +221,7 @@ namespace KTANE_Bot
                                 additionalInfo = ", first letter";
                                 break;
                             case "Defuse who is on first":
-                                additionalInfo = "is on first, what's on the display?";
+                                additionalInfo = "first, what's on the display?";
                                 break;
                             case "Defuse maze":
                                 additionalInfo = "; Any green circle coordinates.";
@@ -235,6 +270,12 @@ namespace KTANE_Bot
                     {
                         //WIRES SOLVER.
                         case Solvers.Wires:
+                            if (command == "ESCAPE MODULE")
+                            {
+                                SwitchToDefaultProperties();
+                                return "Cancelled";
+                            }
+
                             if (_defusingModule == null)
                                 _defusingModule = new Wires(_bomb);
                             
@@ -260,6 +301,12 @@ namespace KTANE_Bot
                         
                         //BUTTON SOLVER.
                         case Solvers.Button:
+                            if (command == "ESCAPE MODULE")
+                            {
+                                SwitchToDefaultProperties();
+                                return "Cancelled";
+                            }
+
                             if (new Button(_bomb, command.Split(' ')[0], command.Split(' ')[1]).Solve() ==
                                 "Press and immediately release.")
                             {
@@ -278,6 +325,12 @@ namespace KTANE_Bot
                         
                         //SYMBOLS SOLVER.
                         case Solvers.Symbols:
+                            if (command == "ESCAPE MODULE")
+                            {
+                                SwitchToDefaultProperties();
+                                return "Cancelled";
+                            }
+
                             if (_defusingModule == null)
                                 _defusingModule = new Symbols(_bomb);
 
@@ -295,6 +348,11 @@ namespace KTANE_Bot
 
                         //MEMORY SOLVER.
                         case Solvers.Memory:
+                            if (command == "ESCAPE MODULE")
+                            {
+                                SwitchToDefaultProperties();
+                                return "Cancelled";
+                            }
                             if (_defusingModule == null)
                                 _defusingModule = new Memory(_bomb);
 
@@ -362,6 +420,12 @@ namespace KTANE_Bot
                         
                         //WHO'S ON FIRST.
                         case Solvers.WhoIsOnFirst:
+                            if (command == "ESCAPE MODULE")
+                            {
+                                SwitchToDefaultProperties();
+                                return "Cancelled";
+                            }
+
                             if (_defusingModule == null)
                                 _defusingModule = new WhoIsOnFirst(_bomb);
 
@@ -389,14 +453,14 @@ namespace KTANE_Bot
                         
                         //MORSE CODE SOLVER.
                         case Solvers.Morse:
-                            if (_defusingModule == null)
-                                _defusingModule = new Morse(_bomb);
-
-                            if (command == "escape module")
+                            if (command == "ESCAPE MODULE")
                             {
                                 SwitchToDefaultProperties();
-                                return "Cancelled Morse.";
+                                return "Cancelled";
                             }
+                            
+                            if (_defusingModule == null)
+                                _defusingModule = new Morse(_bomb);
                             
                             var morse = (Morse)_defusingModule;
 
@@ -415,6 +479,12 @@ namespace KTANE_Bot
                         
                         //KNOB SOLVER.
                         case Solvers.Knob:
+                            if (command == "ESCAPE MODULE")
+                            {
+                                SwitchToDefaultProperties();
+                                return "Cancelled";
+                            }
+
                             if (_defusingModule == null)
                                 _defusingModule = new Knob(_bomb);
 
@@ -425,14 +495,14 @@ namespace KTANE_Bot
                         
                         //PASSWORD SOLVER.
                         case Solvers.Password:
-                            if (_defusingModule == null)
-                                _defusingModule = new Password(_bomb);
-
                             if (command == "ESCAPE MODULE")
                             {
                                 SwitchToDefaultProperties();
-                                return "Cancelled Password";
+                                return "Cancelled";
                             }
+
+                            if (_defusingModule == null)
+                                _defusingModule = new Password(_bomb);
 
                             var password = (Password)_defusingModule;
 
@@ -451,14 +521,14 @@ namespace KTANE_Bot
 
                         //MAZE SOLVER.
                         case Solvers.Maze:
-                            if (_defusingModule == null)
-                                _defusingModule = new Maze(_bomb);
-
                             if (command == "ESCAPE MODULE")
                             {
                                 SwitchToDefaultProperties();
-                                return "Cancelled Maze.";
+                                return "Cancelled";
                             }
+                            
+                            if (_defusingModule == null)
+                                _defusingModule = new Maze(_bomb);
 
                             var maze = (Maze)_defusingModule;
 

@@ -1,4 +1,5 @@
 using System.IO;
+using System.Security.Policy;
 using System.Speech.Recognition;
 
 namespace KTANE_Bot
@@ -34,7 +35,11 @@ namespace KTANE_Bot
             var countBatteries = new GrammarBuilder(batteryChoices);
             var trueOrFalse = new Choices(new string[] {"yes", "no", "true", "false"});
             var oddEven = new Choices(new string[] {"odd", "even"});
-            
+
+            // Add "done" command
+            var done = new GrammarBuilder("done");
+            var escape = new GrammarBuilder("ESCAPE MODULE");
+
             //batteries
             var battery = new GrammarBuilder("Batteries");
             battery.Append(countBatteries);
@@ -44,7 +49,7 @@ namespace KTANE_Bot
             parallelPort.Append(trueOrFalse);
                 
             //frk, interpreted as the word "freak".
-            var frk = new GrammarBuilder("Fake");
+            var frk = new GrammarBuilder("Freak");
             frk.Append(trueOrFalse);
                 
             //car, interpreted as the word "car".
@@ -58,8 +63,8 @@ namespace KTANE_Bot
             //last number of serial number
             var digit = new GrammarBuilder("Digit");
             digit.Append(oddEven);
-                
-            var allChoices = new Choices(new GrammarBuilder[] {battery, vowel, parallelPort, digit, frk, car});
+
+            var allChoices = new Choices(new GrammarBuilder[] { battery, vowel, parallelPort, digit, frk, car, done, escape });
             return new Grammar(allChoices) {Name = "Bomb Check Grammar"};
         }
 
@@ -76,7 +81,10 @@ namespace KTANE_Bot
             blue.Append(labelChoices);
             white.Append(labelChoices);
 
-            var allChoices = new Choices(new GrammarBuilder[] {red, yellow, blue, white});
+            // Add "done" command
+            var done = new GrammarBuilder("ESCAPE MODULE");
+
+            var allChoices = new Choices(new GrammarBuilder[] {red, yellow, blue, white, done});
             return new Grammar(allChoices) {Name = "Button Grammar"};
         }
 
@@ -85,18 +93,21 @@ namespace KTANE_Bot
             var grammarBuilder = new GrammarBuilder();
             grammarBuilder.Append("Numbers", 1, 7);
             grammarBuilder.AppendDictation(category: "numbers");
+            grammarBuilder.Append(new Choices("ESCAPE MODULE")); // Add "done" command
 
-            return new Grammar(grammarBuilder) {Name = "Memory Grammar"};
+            return new Grammar(grammarBuilder) { Name = "Memory Grammar" };
         }
 
         private static Grammar _WiresGrammar()
         {
-            return new Grammar(new GrammarBuilder(new Choices(new string[] {"yellow", "blue", "black", "white", "red", "done", "wrong"}))) {Name = "Wires Grammar"};
+            return new Grammar(new GrammarBuilder(new Choices(new string[] {"yellow", "blue", "black", "white", "red", "done", "ESCAPE MODULE", "wrong"}))) {Name = "Wires Grammar"};
         }
-        
+
         private static Grammar _KnobGrammar()
         {
-            return new Grammar(new GrammarBuilder(new Choices(File.ReadAllLines(@"Knob.txt")))) {Name = "Knob Grammar"};
+            var choices = new Choices(File.ReadAllLines(@"Knob.txt"));
+            choices.Add("ESCAPE MODULE"); // Add "done" command
+            return new Grammar(new GrammarBuilder(choices)) { Name = "Knob Grammar" };
         }
 
         private static Grammar _MazeGrammar()
@@ -127,20 +138,27 @@ namespace KTANE_Bot
         private static Grammar _MorseGrammar()
         {
             var builder = new GrammarBuilder();
-            
             builder.AppendDictation();
-            return new Grammar(builder) {Name = "Morse Grammar"};
+            builder.Append(new Choices("ESCAPE MODULE")); // Add "done" command
+            return new Grammar(builder) { Name = "Morse Grammar" };
         }
+
 
         private static Grammar _SymbolsGrammar()
         {
-            return new Grammar(new GrammarBuilder(new Choices(File.ReadAllLines(@"Symbols.txt")))) {Name = "Symbols Grammar"};
+            var choices = new Choices(File.ReadAllLines(@"Symbols.txt"));
+            choices.Add("ESCAPE MODULE"); // Add "done" command
+            return new Grammar(new GrammarBuilder(choices)) { Name = "Symbols Grammar" };
         }
+
 
         private static Grammar _PasswordGrammar()
         {
-            return new Grammar(new GrammarBuilder(new Choices(File.ReadAllLines(@"Password.txt")))) {Name = "Password Grammar"};
+            var choices = new Choices(File.ReadAllLines(@"Password.txt"));
+            choices.Add("ESCAPE MODULE"); // Add "done" command
+            return new Grammar(new GrammarBuilder(choices)) { Name = "Password Grammar" };
         }
+
 
         private static Grammar _SequenceGrammar()
         {
@@ -213,7 +231,10 @@ namespace KTANE_Bot
 
         private static Grammar _WhoIsOnFirstGrammar()
         {
-            return new Grammar(new GrammarBuilder(new Choices(File.ReadAllLines(@"WhoIsOnFirst.txt")))) {Name = "Who's On First Grammar"};
+            var choices = new Choices(File.ReadAllLines(@"WhoIsOnFirst.txt"));
+            choices.Add("ESCAPE MODULE"); // Add "done" command
+            return new Grammar(new GrammarBuilder(choices)) { Name = "Who's On First Grammar" };
         }
+
     }
 }

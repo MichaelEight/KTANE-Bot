@@ -30,10 +30,21 @@ namespace KTANE_Bot
             _ktaneSpeech = new KTANE_Speech();
             _ktaneSpeech.RecognitionEngine.SpeechRecognized += DefaultSpeechRecognized;
 
+            int currentVoiceIndex = 0;
+            int targetVoice = 0;
             foreach (var voice in _ktaneSpeech.GetAllVoices())
+            {
                 comboBoxVoices.Items.Add(voice);
+                   
+                if(voice.Contains("David")) // Focus on David, he's the best... or at least not worst
+                {
+                    targetVoice = currentVoiceIndex;
+                }
 
-            comboBoxVoices.SelectedIndex = 0;
+                currentVoiceIndex++;
+            }
+
+            comboBoxVoices.SelectedIndex = targetVoice;
             ResetBomb = true;
             UpdateInput();
         }
@@ -52,38 +63,62 @@ namespace KTANE_Bot
         {
             var defuseGrammars = new Dictionary<string, string>
             {
-                { "Standard Defuse Grammar", "Defuse <module>|Bomb Check|The bomb is Defused|The bomb exploded" },
-                { "Complicated Grammar", "<THE COLORS OF THE WIRE> + <nothing|star|light|star and light>" },
-                { "Sequence Grammar", "<COLOR OF THE WIRE> + <alpha|bravo|charlie>, To escape say \"done.\"" },
-                { "Button Grammar", "<color> <label>|<color> stripe" },
-                { "Simon Says Grammar", "<color that flashes last>" },
-                { "Wires Grammar", "<color> (await for next wire)" },
+                {
+                    "Standard Defuse Grammar",
+                    "Defuse <module>\nRandom Bomb | Skip Bomb | Bomb Check |\nThe bomb is Defused | The bomb exploded"
+                },
+                {
+                    "Complicated Grammar",
+                    "To escape say \"escape module\"\n<THE COLORS OF THE WIRE> + <nothing|star|light|star and light>"
+                },
+                {
+                    "Sequence Grammar",
+                    "To escape say \"done\"\n<COLOR OF THE WIRE> + <alpha|bravo|charlie>"
+                },
+                {
+                    "Button Grammar",
+                    "To escape say \"escape module\"\n<color> <label>|<color> stripe"
+                },
+                {
+                    "Simon Says Grammar",
+                    "To escape say \"done\"\n<color that flashes last>" 
+                },
+                {
+                    "Wires Grammar",
+                    "To escape say \"escape module\"\n<color> (await for next wire)"
+                },
                 {
                     "Who's On First Grammar",
-                    "Say what you see as is except: red color, u(r) letter(s), ar ee ee dee, el ee ee dee, their OR your pronoun," +
-                    " you're or they're apostrophe, charlie echo echo (cee), u h space u h. Say \"Stop\" to stop speaking."
+                    "To escape say \"escape module\"\nSay what you see as is except: red color, u(r) letter(s), ar ee ee dee, el ee ee dee, their OR your pronoun," +
+                    " you're or they're apostrophe, charlie echo echo (cee), u h space u h\nSay \"Stop\" to stop speaking."
                 },
                 {
                     "Password Grammar",
-                    "<military alphabet|regular alphabet> (await for next). To escape say \"escape module.\""
+                    "To escape say \"escape module\"\n<military alphabet|regular alphabet> (await for next)"
                 },
                 {
                     "Morse Grammar",
-                    "<0>|<1> (await for next letter) (0 is DOT, 1 is the DASH). To escape say \"escape module\"."
+                    "<0>|<1> (await for next letter) (0 is DOT, 1 is the DASH)"
                 },
                 {
                     "Knob Grammar",
-                    "<zero or one, three times> space <zero or one, three times> (Say the upper right and lower right lights. Zero is unlit, one is lit)"
+                    "To escape say \"escape module\"\n<zero or one, three times> space <zero or one, three times>\n(Say the upper right and lower right lights. Zero is unlit, one is lit)"
                 },
                 {
                     "Symbols Grammar",
-                    "<symbol> (await for next symbol). I have no idea how to explain this. Check Symbols.txt to see all available symbols."
+                    "To escape say \"escape module\"\n<symbol> (await for next symbol)\nCheck Symbols.txt to see and edit all available symbols"
                 },
-                { "Maze Grammar", "<0-6>, <0-6>. To escape say \"escape module\"." },
-                { "Memory Grammar", "Numbers <all four numbers that you see>." },
+                { 
+                    "Maze Grammar",
+                    "To escape say \"escape module\"\n<0-6>, <0-6>"
+                },
+                { 
+                    "Memory Grammar",
+                    "Numbers <all four numbers that you see>."
+                },
                 {
                     "Bomb Check Grammar",
-                    "Batteries <0-6> or none or more than two|Freak <yes/true/false/no>|Car <yes/true/false/no>|Vowel <yes/true/false/no>|Port <yes/true/false/no>|Digit <odd/even>"
+                    "To escape say \"done\"\nBatteries <0-6> or none or more than two|Freak <yes/true/false/no>|Car <yes/true/false/no>|\nVowel <yes/true/false/no>|Port <yes/true/false/no>|Digit <odd/even>"
                 }
             };
 
